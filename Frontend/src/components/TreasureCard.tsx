@@ -14,14 +14,11 @@ import {
   IconButtonProps,
 } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import { displayShortString } from "@/utils/displayAddress";
+import { formatNumber } from "@/utils/format";
 
 interface ExpandMoreProps extends IconButtonProps {
   expand: boolean;
-}
-
-interface TreasureCardProps {
-  expanded: boolean;
-  handleExpandClick: () => void;
 }
 
 const ExpandMore = styled(({ expand, ...other }: ExpandMoreProps) => {
@@ -34,7 +31,31 @@ const ExpandMore = styled(({ expand, ...other }: ExpandMoreProps) => {
   }),
 }));
 
-const TreasureCard = () => {
+interface TreasureCardProps {
+  userAddress: string;
+  host: string;
+  prizeAmount: number;
+  totalFeeAmount: number;
+  userAmount: number;
+  creationDate: string;
+  deadline: string;
+  winner: string;
+  robbingTreasures: number;
+  currentPrice: number;
+}
+
+const TreasureCard = ({
+  userAddress,
+  host,
+  prizeAmount,
+  totalFeeAmount,
+  userAmount,
+  creationDate,
+  deadline,
+  winner,
+  robbingTreasures,
+  currentPrice,
+}: TreasureCardProps) => {
   const [expanded, setExpanded] = useState(false);
 
   const handleExpandClick = () => {
@@ -58,7 +79,7 @@ const TreasureCard = () => {
         alignItems="center"
       >
         <Typography fontSize="1.5rem" fontWeight="700" color="#535A66">
-          1 ETH
+          {prizeAmount} ETH
         </Typography>
         <Stack
           width="5rem"
@@ -102,7 +123,7 @@ const TreasureCard = () => {
             Robbing Treasures
           </Typography>
           <Typography fontSize="1rem" fontWeight="400" color="#7B869A">
-            12 Hunters
+            {robbingTreasures} Hunters
           </Typography>
         </Stack>
         {/* Snatch Button */}
@@ -129,7 +150,7 @@ const TreasureCard = () => {
             px="1.5rem"
           >
             <Typography fontSize="0.875rem" fontWeight="500" color="#FFFFFF">
-              Current price 3U
+              Current price {currentPrice}U
             </Typography>
             <Typography fontSize="0.875rem" fontWeight="700" color="#FFFFFF">
               SNATCH IT!
@@ -184,7 +205,8 @@ const TreasureCard = () => {
               </Typography>
             </Stack>
             <Typography fontSize="1rem" fontWeight="500" color="#535A66">
-              {`0x6A...3C12 (You)`}
+              {displayShortString(winner, 4, 4)}{" "}
+              {userAddress === winner && `(You)`}
             </Typography>
           </Stack>
           <Stack width="100%" justifyContent="flex-start" spacing="12px">
@@ -199,7 +221,7 @@ const TreasureCard = () => {
                 Your Amount
               </Typography>
               <Typography fontSize="1rem" fontWeight="400" color="#7B869A">
-                4 U
+                {userAmount} U
               </Typography>
             </Stack>
             {/* Total Amount */}
@@ -214,7 +236,7 @@ const TreasureCard = () => {
                 Total Amount
               </Typography>
               <Typography fontSize="1rem" fontWeight="400" color="#7B869A">
-                20,367 U
+                {formatNumber(totalFeeAmount)} U
               </Typography>
             </Stack>
             {/* Host */}
@@ -229,7 +251,7 @@ const TreasureCard = () => {
                 Host
               </Typography>
               <Typography fontSize="1rem" fontWeight="400" color="#7B869A">
-                0n4S...8C90
+                {displayShortString(host, 4, 4)}
               </Typography>
             </Stack>
             {/* Creation Date */}
@@ -244,7 +266,7 @@ const TreasureCard = () => {
                 Creation Date
               </Typography>
               <Typography fontSize="1rem" fontWeight="400" color="#7B869A">
-                2023/06/12
+                {creationDate}
               </Typography>
             </Stack>
           </Stack>

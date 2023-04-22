@@ -20,11 +20,18 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import TreasureCard from "@/components/TreasureCard";
 import TabButtons from "@/components/TabButtons";
 import MenuIcon from "@mui/icons-material/Menu";
+import { useGetGameIdCounts } from "@/hooks/useGetGameIdCounts";
 
 export default function TreasureBoard() {
   const [innerHeight, setInnerHeight] = useState<number>(0);
   const [scrollHeight, setScrollHeight] = useState<number>(0);
   const { account, chainId } = useEthers();
+  const gameIdCounts = useGetGameIdCounts();
+  const [value, setValue] = React.useState(0);
+
+  const handleTabChange = (newValue: React.SetStateAction<number>) => {
+    setValue(newValue);
+  };
 
   useEffect(() => {
     setInnerHeight(window.innerHeight);
@@ -58,7 +65,14 @@ export default function TreasureBoard() {
         </IconButton>
       </Box>
       <WalletConnectButton />
-      {account && <TabButtons />}
+      {account && (
+        <TabButtons
+          value={value}
+          handleChange={handleTabChange}
+          huntingCounts={gameIdCounts}
+          historyCounts={1}
+        />
+      )}
       <Box
         width="100%"
         height={scrollHeight ? `${scrollHeight}px` : "100vh"}
@@ -67,9 +81,40 @@ export default function TreasureBoard() {
         sx={{ overflowY: "scroll" }}
       >
         <Stack width="100%" spacing={3} pb="2rem">
-          <TreasureCard />
-          <TreasureCard />
-          <TreasureCard />
+          {!account ? (
+            <>
+              <TreasureCard
+                userAddress={""}
+                host={"0x79603CBB5c09ABBC80Ec4113C2dc3d3830e7271d"}
+                prizeAmount={1}
+                totalFeeAmount={20367}
+                userAmount={4}
+                creationDate="2023/06/12"
+                deadline=""
+                winner="0x79603CBB5c09ABBC80Ec4113C2dc3d3830e7271d"
+                robbingTreasures={12}
+                currentPrice={3}
+              />
+            </>
+          ) : (
+            <>
+              <TreasureCard
+                userAddress={account}
+                host={"0x79603CBB5c09ABBC80Ec4113C2dc3d3830e7271d"}
+                prizeAmount={1}
+                totalFeeAmount={20367}
+                userAmount={4}
+                creationDate="2023/06/12"
+                deadline=""
+                winner="0x79603CBB5c09ABBC80Ec4113C2dc3d3830e7271d"
+                robbingTreasures={12}
+                currentPrice={3}
+              />
+              {/* <TreasureCard />
+              <TreasureCard />
+              <TreasureCard /> */}
+            </>
+          )}
         </Stack>
       </Box>
     </>

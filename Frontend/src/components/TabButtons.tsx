@@ -1,21 +1,19 @@
-import React, { useState, useEffect } from "react";
-import {
-  Box,
-  Stack,
-  styled,
-  Button,
-  Tabs,
-  Tab,
-  Typography,
-} from "@mui/material";
+import React from "react";
+import { Stack, Button, Typography } from "@mui/material";
 
-const TabButtons = () => {
-  const [value, setValue] = React.useState(0);
+interface TabButtonsProps {
+  value: number;
+  handleChange: (newValue: React.SetStateAction<number>) => void;
+  huntingCounts: number;
+  historyCounts: number;
+}
 
-  const handleChange = (newValue: React.SetStateAction<number>) => {
-    setValue(newValue);
-  };
-
+const TabButtons = ({
+  value,
+  handleChange,
+  huntingCounts,
+  historyCounts,
+}: TabButtonsProps) => {
   return (
     <Stack
       direction="row"
@@ -45,7 +43,7 @@ const TabButtons = () => {
           fontWeight="700"
           color={value === 0 ? "#535A66" : "#535A6640"}
         >
-          Hunting {`(${12})`}
+          Hunting {`(${huntingCounts})`}
         </Typography>
       </Button>
       <Button
@@ -68,7 +66,7 @@ const TabButtons = () => {
           fontWeight="700"
           color={value === 1 ? "#535A66" : "#535A6640"}
         >
-          History {`(${2})`}
+          History {`(${historyCounts})`}
         </Typography>
       </Button>
     </Stack>
