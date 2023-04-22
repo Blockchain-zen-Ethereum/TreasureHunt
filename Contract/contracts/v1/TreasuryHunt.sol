@@ -46,6 +46,8 @@ contract Treasury is Ownable {
     uint256 public constant PRIZE_DISTRIBUTION_LOTTERY = 10;
 
     mapping(uint256 => Game) public games;
+    mapping(address => mapping(uint256 => uint256))
+        public userParticipationCount;
     mapping(address => rewardDistribution[]) public winnerPrizeList;
     mapping(address => rewardDistribution[]) public creatorRewardList;
     mapping(address => rewardDistribution[]) public lotteryRewardList;
@@ -95,6 +97,7 @@ contract Treasury is Ownable {
         require(game.creator != address(0), "Game does not exist.");
         require(game.deadline > block.timestamp, "Game has expired.");
 
+        userParticipationCount[msg.sender][_gameId]++;
         game.winner = msg.sender;
         game.deadline = block.timestamp.add(DEFAULT_GAME_DURATION);
 
@@ -217,5 +220,40 @@ contract Treasury is Ownable {
         lotteryReward.isClaimed = true;
 
         prizeToken.safeTransfer(msg.sender, lotteryReward.amount);
+    }
+
+    function getLotteryInfo(
+        uint256 _gameId
+    )
+        external
+        view
+        returns (uint256 randomNumber, uint256 participantCount, address winner)
+    {
+        Game memory game = games[_gameId];
+        require(game.creator != address(0), "Game does not exist.");
+
+        return (
+            game.lottery.randomNumber,
+            game.lottery.tickets.length,
+            game.lottery.winner
+        );
+    }
+
+    function getGameParticipantList(
+        uint256 _gameId,
+        uint256 _start,
+        uint256 _end
+    ) external view returns (address[] memory) {
+        Game memory game = games[_gameId];
+        require(game.creator != address(0), "Game does not exist.");
+        require(_start >= 0 && _start <= _end, "Index out of range");
+        require(game.lottery.tickets.length <= _end, "Index out of range");
+
+        address[] memory participants = new address[](_end.sub(_start).add(1));
+        for(uint256 i = _start; i <= _end; i++) {
+            participants[i.sub(_start)] = game.lottery.tickets[_start];
+        }
+
+        return participants;
     }
 }
