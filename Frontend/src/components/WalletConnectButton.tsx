@@ -29,6 +29,9 @@ const WalletConnectButton = () => {
           "&:hover": {
             bgcolor: "#F6F6F6",
           },
+          "&:active": {
+            bgcolor: "#9095A1",
+          },
         }}
       >
         {!account ? (
