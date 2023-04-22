@@ -18,13 +18,14 @@ const theme = createTheme({
           overflow: "hidden",
           magin: 0,
           padding: 0,
+          backgroundColor: "#EDEFF5",
         },
       },
     },
   },
   palette: {
     primary: {
-      main: "#556cd6",
+      main: "#EDEFF5",
     },
     secondary: {
       main: "#19857b",
