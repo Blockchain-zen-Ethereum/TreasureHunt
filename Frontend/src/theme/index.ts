@@ -16,16 +16,24 @@ const theme = createTheme({
       styleOverrides: {
         "*": {
           overflow: "hidden",
-          magin: 0,
+          margin: 0,
           padding: 0,
+          boxSizing: "border-box",
+        },
+      },
+    },
+    MuiContainer: {
+      styleOverrides: {
+        root: {
           backgroundColor: "#EDEFF5",
+          padding: 0,
         },
       },
     },
   },
   palette: {
     primary: {
-      main: "#EDEFF5",
+      main: "#000000",
     },
     secondary: {
       main: "#19857b",
