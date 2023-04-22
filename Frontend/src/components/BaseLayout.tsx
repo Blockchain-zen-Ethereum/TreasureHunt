@@ -21,29 +21,13 @@ export default function BaseLayout({
         backgroundColor: "#000000",
       }}
     >
-      <Container maxWidth="xs" sx={{ height: `${innerHeight ?? "100vh"}` }}>
-        <Box
-          sx={{
-            width: "100%",
-            // height: "2.5rem",
-            paddingX: "1rem",
-            paddingY: "0.375rem",
-          }}
-        >
-          <IconButton
-            aria-label="menu"
-            sx={{
-              color: "#7B869A",
-              width: "2rem",
-              height: "2rem",
-              padding: 0,
-              margin: 0,
-            }}
-          >
-            <MenuIcon sx={{ fontSize: "2rem" }} />
-          </IconButton>
+      <Container
+        maxWidth="xs"
+        sx={{ height: `${innerHeight ?? "100vh"}`, bgcolor: "#000" }}
+      >
+        <Box width="100%" height="100%" bgcolor="#F5F5F5">
+          {children}
         </Box>
-        {children}
       </Container>
     </main>
   );
