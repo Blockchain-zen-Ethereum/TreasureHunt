@@ -6,7 +6,7 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "../lib/thundercore/RandomLibrary.sol";
 
-contract Treasury is Ownable {
+contract TreasuryHunt is Ownable {
     using SafeMath for uint256;
     using SafeERC20 for IERC20;
 
@@ -47,7 +47,7 @@ contract Treasury is Ownable {
 
     mapping(uint256 => Game) public games;
     mapping(address => mapping(uint256 => uint256))
-        public userParticipationCount;
+        public userParticipationAmount;
     mapping(address => rewardDistribution[]) public winnerPrizeList;
     mapping(address => rewardDistribution[]) public creatorRewardList;
     mapping(address => rewardDistribution[]) public lotteryRewardList;
@@ -89,7 +89,7 @@ contract Treasury is Ownable {
         });
 
         gameIdCounter = gameIdCounter.add(1);
-        prizeToken.transferFrom(msg.sender, address(this), _prizeAmount);
+        prizeToken.safeTransferFrom(msg.sender, address(this), _prizeAmount);
     }
 
     function joinGame(uint256 _gameId) external {
@@ -97,7 +97,6 @@ contract Treasury is Ownable {
         require(game.creator != address(0), "Game does not exist.");
         require(game.deadline > block.timestamp, "Game has expired.");
 
-        userParticipationCount[msg.sender][_gameId]++;
         game.winner = msg.sender;
         game.deadline = block.timestamp.add(DEFAULT_GAME_DURATION);
 
@@ -110,7 +109,8 @@ contract Treasury is Ownable {
                 (10 ** FEE_TOKEN_DECIMAL)
         );
         game.totalFeeAmount = game.totalFeeAmount.add(feeAmount);
-        prizeToken.transferFrom(msg.sender, address(this), feeAmount);
+        userParticipationAmount[msg.sender][_gameId] = userParticipationAmount[msg.sender][_gameId].add(feeAmount);
+        prizeToken.safeTransferFrom(msg.sender, address(this), feeAmount);
     }
 
     function endGame(uint256 _gameId) external {
@@ -219,7 +219,7 @@ contract Treasury is Ownable {
         require(!lotteryReward.isClaimed, "The reward has been claimed");
         lotteryReward.isClaimed = true;
 
-        prizeToken.safeTransfer(msg.sender, lotteryReward.amount);
+        feeToken.safeTransfer(msg.sender, lotteryReward.amount);
     }
 
     function getLotteryInfo(
