@@ -1,58 +1,55 @@
 import React, { useState, useEffect } from "react";
-import Head from "next/head";
-import Image from "next/image";
-import { Inter } from "next/font/google";
-import {
-  Box,
-  Stack,
-  styled,
-  Button,
-  Tabs,
-  Tab,
-  Typography,
-} from "@mui/material";
-import styles from "@/styles/Home.module.css";
-import { useEthers } from "@usedapp/core";
-import { displayShortString } from "@/utils/displayAddress";
-import WalletConnectButton from "@/components/WalletConnectButton";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import TreasureCard from "@/components/TreasureCard";
-import TabButtons from "@/components/TabButtons";
+import { Box, Stack, Button, Typography } from "@mui/material";
+import { useRouter } from "next/router";
 
 export default function Home() {
+  const router = useRouter();
   const [innerHeight, setInnerHeight] = useState<number>(0);
-  const [scrollHeight, setScrollHeight] = useState<number>(0);
-  const { account, chainId } = useEthers();
-  const [expanded, setExpanded] = useState(false);
 
-  const handleExpandClick = () => {
-    setExpanded(!expanded);
+  const handleLaunchApp = () => {
+    router.push("/treasure-board");
   };
 
   useEffect(() => {
     setInnerHeight(window.innerHeight);
-    setScrollHeight(
-      account
-        ? window.innerHeight - 44 - 44 - 28 - 42 - 19
-        : window.innerHeight - 44 - 44 - 28
-    );
-  }, [account]);
+  }, []);
 
   return (
     <>
-      <WalletConnectButton />
-      {account && <TabButtons />}
       <Box
         width="100%"
-        height={scrollHeight ? `${scrollHeight}px` : "100vh"}
-        px="1rem"
-        mt="1.75rem"
-        sx={{ overflowY: "scroll" }}
+        height={innerHeight ? `${innerHeight}px` : "100%"}
+        sx={{
+          backgroundImage: `url("/images/home.jpeg")`,
+          backgroundSize: "cover",
+        }}
       >
-        <Stack width="100%" spacing={3} pb="2rem">
-          <TreasureCard />
-          <TreasureCard />
-          <TreasureCard />
+        <Stack
+          width="100%"
+          height="100%"
+          justifyContent="flex-end"
+          alignItems="center"
+        >
+          <Button
+            sx={{
+              width: "20.375rem",
+              height: "3rem",
+              bgcolor: "#fff",
+              "&:hover": {
+                bgcolor: "#F6F6F6",
+              },
+              "&:active": {
+                bgcolor: "#EBEBEB",
+              },
+              borderRadius: "2.5rem",
+              marginBottom: "5rem",
+            }}
+            onClick={handleLaunchApp}
+          >
+            <Typography fontSize="1.375rem" fontWeight="700" color="#1B4BF1">
+              Launch APP
+            </Typography>
+          </Button>
         </Stack>
       </Box>
     </>
