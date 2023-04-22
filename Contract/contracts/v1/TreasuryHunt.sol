@@ -110,7 +110,7 @@ contract TreasuryHunt is Ownable {
         );
         game.totalFeeAmount = game.totalFeeAmount.add(feeAmount);
         userParticipationAmount[msg.sender][_gameId] = userParticipationAmount[msg.sender][_gameId].add(feeAmount);
-        prizeToken.safeTransferFrom(msg.sender, address(this), feeAmount);
+        feeToken.safeTransferFrom(msg.sender, address(this), feeAmount);
     }
 
     function endGame(uint256 _gameId) external {
