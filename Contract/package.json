@@ -1,0 +1,19 @@
+{
+  "name": "treasure-hunt-contract",
+  "version": "1.0.0",
+  "description": "",
+  "main": "hardhat.config.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "compile": "hardhat compile"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@openzeppelin/contracts": "^4.8.3",
+    "ethers": "^6.3.0",
+    "hardhat": "^2.14.0"
+  }
+}
