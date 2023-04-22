@@ -32,7 +32,6 @@ export default function BaseLayout({
         >
           <IconButton
             aria-label="menu"
-            // disabled
             sx={{
               color: "#7B869A",
               width: "2rem",
