@@ -16,6 +16,11 @@ import {
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { displayShortString } from "@/utils/displayAddress";
 import { formatNumber } from "@/utils/format";
+import {
+  getDate,
+  calculateDaysBetweenDates,
+  countdownTimer,
+} from "@/utils/getDate";
 
 interface ExpandMoreProps extends IconButtonProps {
   expand: boolean;
@@ -37,8 +42,8 @@ interface TreasureCardProps {
   prizeAmount: number;
   totalFeeAmount: number;
   userAmount: number;
-  creationDate: string;
-  deadline: string;
+  creationDate: number;
+  deadline: number;
   winner: string;
   robbingTreasures: number;
   currentPrice: number;
@@ -57,6 +62,8 @@ const TreasureCard = ({
   currentPrice,
 }: TreasureCardProps) => {
   const [expanded, setExpanded] = useState(false);
+
+  const leftDays = calculateDaysBetweenDates(creationDate, deadline);
 
   const handleExpandClick = () => {
     setExpanded(!expanded);
@@ -108,7 +115,9 @@ const TreasureCard = ({
             Time Left
           </Typography>
           <Typography fontSize="1rem" fontWeight="400" color="#7B869A">
-            2 Day 21:06:52
+            {leftDays > 0
+              ? `${leftDays} Days ${countdownTimer(creationDate, deadline)}`
+              : countdownTimer(creationDate, deadline)}
           </Typography>
         </Stack>
         {/* Robbing Treasures */}
@@ -266,7 +275,7 @@ const TreasureCard = ({
                 Creation Date
               </Typography>
               <Typography fontSize="1rem" fontWeight="400" color="#7B869A">
-                {creationDate}
+                {getDate(creationDate)}
               </Typography>
             </Stack>
           </Stack>

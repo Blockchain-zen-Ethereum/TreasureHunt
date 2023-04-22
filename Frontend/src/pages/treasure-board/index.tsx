@@ -89,8 +89,8 @@ export default function TreasureBoard() {
                 prizeAmount={1}
                 totalFeeAmount={20367}
                 userAmount={4}
-                creationDate="2023/06/12"
-                deadline=""
+                creationDate={1682265600}
+                deadline={1682267000}
                 winner="0x79603CBB5c09ABBC80Ec4113C2dc3d3830e7271d"
                 robbingTreasures={12}
                 currentPrice={3}
@@ -104,8 +104,8 @@ export default function TreasureBoard() {
                 prizeAmount={1}
                 totalFeeAmount={20367}
                 userAmount={4}
-                creationDate="2023/06/12"
-                deadline=""
+                creationDate={1682265600}
+                deadline={1732267000}
                 winner="0x79603CBB5c09ABBC80Ec4113C2dc3d3830e7271d"
                 robbingTreasures={12}
                 currentPrice={3}
