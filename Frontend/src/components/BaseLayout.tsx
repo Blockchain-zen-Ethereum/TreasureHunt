@@ -6,15 +6,19 @@ export default function BaseLayout({
 }: {
   children?: React.ReactNode;
 }) {
-  const [innerHeight, setInnerHeight] = useState<number>(0);
+  const [innerHeight, setInnerHeight] = useState<string>("0px");
 
   useEffect(() => {
-    setInnerHeight(window.innerHeight);
+    setInnerHeight(window.innerHeight.toString() + "px");
   }, []);
 
   return (
-    <main>
-      <Container sx={{ width: "100vw", height: "100vh" }}>{children}</Container>
+    <main
+      style={{ width: "100vw", height: "100vh", backgroundColor: "#000000" }}
+    >
+      <Container maxWidth="xs" sx={{ height: `${innerHeight ?? "100vh"}` }}>
+        {children}
+      </Container>
     </main>
   );
 }
