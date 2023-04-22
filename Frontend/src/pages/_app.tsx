@@ -6,6 +6,8 @@ import { ThemeProvider } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
 import theme from "../theme";
 import BaseLayout from "@/components/BaseLayout";
+import { DAppProvider } from "@usedapp/core";
+import { config } from "@/config";
 
 export type NextPageWithLayout<P = Record<string, unknown>, IP = P> = NextPage<
   P,
@@ -30,12 +32,14 @@ export default function App({
 }: AppPropsWithLayout & AppErrorProps) {
   const getLayout = Component.getLayout ?? ((page) => page);
   return (
-    <ThemeProvider theme={theme}>
-      {/* CssBaseline kickstart an elegant, consistent, and simple baseline to build upon. */}
-      <CssBaseline />
-      <BaseLayout>
-        {getLayout(<Component {...pageProps} err={err} />)}
-      </BaseLayout>
-    </ThemeProvider>
+    <DAppProvider config={config}>
+      <ThemeProvider theme={theme}>
+        {/* CssBaseline kickstart an elegant, consistent, and simple baseline to build upon. */}
+        <CssBaseline />
+        <BaseLayout>
+          {getLayout(<Component {...pageProps} err={err} />)}
+        </BaseLayout>
+      </ThemeProvider>
+    </DAppProvider>
   );
 }
