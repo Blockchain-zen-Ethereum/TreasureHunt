@@ -37,7 +37,7 @@ contract Treasury is Ownable {
     uint256 public gameIdCounter;
     uint256 public initFeeAmount;
     uint256 public constant PRIZE_TOKEN_DECIMAL = 18;
-    uint256 public constant FEE_TOKEN_DECIMAL = 18;
+    uint256 public constant FEE_TOKEN_DECIMAL = 6;
     uint256 public constant DEFAULT_GAME_DURATION = 60 minutes;
     uint256 public constant DEFAULT_FEE_INCREASE_DURATION = 6 hours;
     uint256 public constant PRIZE_DISTRIBUTION_GAME_CREATOR = 60;
@@ -106,8 +106,8 @@ contract Treasury is Ownable {
 
         uint256 timeDuration = block.timestamp.sub(game.startTime);
         uint256 feeAmount = initFeeAmount.add(
-            (timeDuration.div(DEFAULT_FEE_INCREASE_DURATION)) **
-                FEE_TOKEN_DECIMAL
+            (timeDuration.div(DEFAULT_FEE_INCREASE_DURATION)) *
+                (10 ** FEE_TOKEN_DECIMAL)
         );
         game.totalFeeAmount = game.totalFeeAmount.add(feeAmount);
         prizeToken.transferFrom(msg.sender, address(this), feeAmount);
@@ -250,7 +250,7 @@ contract Treasury is Ownable {
         require(game.lottery.tickets.length <= _end, "Index out of range");
 
         address[] memory participants = new address[](_end.sub(_start).add(1));
-        for(uint256 i = _start; i <= _end; i++) {
+        for (uint256 i = _start; i <= _end; i++) {
             participants[i.sub(_start)] = game.lottery.tickets[_start];
         }
 
