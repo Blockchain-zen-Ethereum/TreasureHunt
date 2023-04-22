@@ -25,11 +25,6 @@ export default function TreasureBoard() {
   const [innerHeight, setInnerHeight] = useState<number>(0);
   const [scrollHeight, setScrollHeight] = useState<number>(0);
   const { account, chainId } = useEthers();
-  const [expanded, setExpanded] = useState(false);
-
-  const handleExpandClick = () => {
-    setExpanded(!expanded);
-  };
 
   useEffect(() => {
     setInnerHeight(window.innerHeight);
@@ -45,7 +40,6 @@ export default function TreasureBoard() {
       <Box
         sx={{
           width: "100%",
-          // height: "2.5rem",
           paddingX: "1rem",
           paddingY: "0.375rem",
         }}

@@ -11,6 +11,7 @@
   "dependencies": {
     "@emotion/react": "^11.10.6",
     "@emotion/styled": "^11.10.6",
+    "@ethersproject/contracts": "^5.7.0",
     "@mui/icons-material": "^5.11.16",
     "@mui/material": "^5.12.1",
     "@types/node": "18.15.13",
@@ -24,5 +25,10 @@
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "typescript": "5.0.4"
+  },
+  "devDependencies": {
+    "ts-generator": "^0.1.1",
+    "typechain": "^8.1.1",
+    "typechain-target-ethers-v5": "^5.0.1"
   }
 }
