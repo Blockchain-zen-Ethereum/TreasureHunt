@@ -15,12 +15,15 @@ import {
 } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { displayShortString } from "@/utils/displayAddress";
-import { formatNumber } from "@/utils/format";
+import { formatNumber, formatBigNumber } from "@/utils/format";
 import {
   getDate,
   calculateDaysBetweenDates,
   countdownTimer,
 } from "@/utils/getDate";
+import { BigNumber } from "ethers";
+import { useGetUserAmount } from "@/hooks/useGetUserAmount";
+// import { formatEther, parseEther } from "@ethersproject/units";
 
 interface ExpandMoreProps extends IconButtonProps {
   expand: boolean;
@@ -37,11 +40,13 @@ const ExpandMore = styled(({ expand, ...other }: ExpandMoreProps) => {
 }));
 
 interface TreasureCardProps {
+  isHunting: boolean;
   userAddress: string;
+  gameId: BigNumber;
+  isSettled: boolean;
   host: string;
-  prizeAmount: number;
-  totalFeeAmount: number;
-  userAmount: number;
+  prizeAmount: BigNumber;
+  totalFeeAmount: BigNumber;
   creationDate: number;
   deadline: number;
   winner: string;
@@ -50,30 +55,39 @@ interface TreasureCardProps {
 }
 
 const TreasureCard = ({
+  isHunting,
   userAddress,
+  gameId,
+  isSettled,
   host,
   prizeAmount,
   totalFeeAmount,
-  userAmount,
   creationDate,
   deadline,
   winner,
   robbingTreasures,
   currentPrice,
 }: TreasureCardProps) => {
+  const currentDate = new Date();
   const [expanded, setExpanded] = useState(false);
+  const userAmount = useGetUserAmount(userAddress, Number(gameId.toString()));
+  const isParticipated = Number(userAmount.toString()) > 0;
+  const isOverDeadline = currentDate.getTime() > deadline * 1000;
+  const isEnd = isOverDeadline && isSettled;
+  const isWin = isParticipated && false;
 
   const leftDays = calculateDaysBetweenDates(creationDate, deadline);
 
   const handleExpandClick = () => {
     setExpanded(!expanded);
   };
+
   return (
     <Card
       sx={{
         maxWidth: "22.375rem",
         width: "22.375rem",
-        minHeight: "15rem",
+        minHeight: `${isHunting ? "15rem" : "11rem"}`,
         borderRadius: "1rem",
       }}
     >
@@ -86,19 +100,62 @@ const TreasureCard = ({
         alignItems="center"
       >
         <Typography fontSize="1.5rem" fontWeight="700" color="#535A66">
-          {prizeAmount} ETH
+          {formatBigNumber(prizeAmount.toString(), 18, 2)} ETH
         </Typography>
         <Stack
           width="5rem"
           height="1.5rem"
-          border="0.5px solid #00AB63"
+          border="0.5px solid"
+          borderColor={
+            isHunting
+              ? isParticipated
+                ? "#1B4BF1"
+                : "#00AB63"
+              : isEnd
+              ? "#535A66"
+              : isWin
+              ? "#FF8A00"
+              : "#535A66"
+          }
           borderRadius="0.25rem"
-          bgcolor="#00AB6315"
+          bgcolor={
+            isHunting
+              ? isParticipated
+                ? "#1B4BF115"
+                : "#00AB6315"
+              : isEnd
+              ? "#535A6615"
+              : isWin
+              ? "#FF8A0015"
+              : "#535A6615"
+          }
           justifyContent="center"
           alignItems="center"
         >
-          <Typography fontSize="0.75rem" fontWeight="500" color="#00AB63">
-            Available
+          <Typography
+            fontSize="0.75rem"
+            fontWeight="500"
+            color={
+              isHunting
+                ? isParticipated
+                  ? "#1B4BF1"
+                  : "#00AB63"
+                : isEnd
+                ? "#535A66"
+                : isWin
+                ? "#FF8A00"
+                : "#535A66"
+            }
+          >
+            {isHunting
+              ? isParticipated
+                ? "Participated"
+                : "Available"
+              : isEnd
+              ? "End"
+              : isWin
+              ? "Win"
+              : "End"}
           </Typography>
         </Stack>
       </Stack>
@@ -114,10 +171,17 @@ const TreasureCard = ({
           <Typography fontSize="1rem" fontWeight="400" color="#7B869A">
             Time Left
           </Typography>
-          <Typography fontSize="1rem" fontWeight="400" color="#7B869A">
-            {leftDays > 0
-              ? `${leftDays} Days ${countdownTimer(creationDate, deadline)}`
-              : countdownTimer(creationDate, deadline)}
+          <Typography
+            fontSize="1rem"
+            fontWeight="400"
+            color={
+              isHunting ? (leftDays > 0 ? "#7B869A" : "#E40029") : "#7B869A"
+            }
+          >
+            {isHunting
+              ? `${leftDays} ${leftDays > 1 ? "Days" : "Day"} 
+            ${countdownTimer(deadline)}`
+              : "0 Day 00:00:00"}
           </Typography>
         </Stack>
         {/* Robbing Treasures */}
@@ -126,7 +190,7 @@ const TreasureCard = ({
           width="100%"
           justifyContent="space-between"
           alignItems="center"
-          mb="1.25rem"
+          mb={isHunting ? "1.25rem" : "0"}
         >
           <Typography fontSize="1rem" fontWeight="400" color="#7B869A">
             Robbing Treasures
@@ -136,36 +200,38 @@ const TreasureCard = ({
           </Typography>
         </Stack>
         {/* Snatch Button */}
-        <Button
-          sx={{
-            width: "100%",
-            height: "2.25rem",
-            borderRadius: "2.5rem",
-            bgcolor: "#1B4BF1",
-            "&:hover": {
-              bgcolor: "#5F81F5",
-            },
-            "&:active": {
-              bgcolor: "#1334A9",
-            },
-          }}
-        >
-          <Stack
-            direction="row"
-            width="100%"
-            height="100%"
-            justifyContent="space-between"
-            alignItems="center"
-            px="1.5rem"
+        {isHunting && (
+          <Button
+            sx={{
+              width: "100%",
+              height: "2.25rem",
+              borderRadius: "2.5rem",
+              bgcolor: "#1B4BF1",
+              "&:hover": {
+                bgcolor: "#5F81F5",
+              },
+              "&:active": {
+                bgcolor: "#1334A9",
+              },
+            }}
           >
-            <Typography fontSize="0.875rem" fontWeight="500" color="#FFFFFF">
-              Current price {currentPrice}U
-            </Typography>
-            <Typography fontSize="0.875rem" fontWeight="700" color="#FFFFFF">
-              SNATCH IT!
-            </Typography>
-          </Stack>
-        </Button>
+            <Stack
+              direction="row"
+              width="100%"
+              height="100%"
+              justifyContent="space-between"
+              alignItems="center"
+              px="1.5rem"
+            >
+              <Typography fontSize="0.875rem" fontWeight="500" color="#FFFFFF">
+                Current price {currentPrice}U
+              </Typography>
+              <Typography fontSize="0.875rem" fontWeight="700" color="#FFFFFF">
+                SNATCH IT!
+              </Typography>
+            </Stack>
+          </Button>
+        )}
       </CardContent>
       <CardActions disableSpacing sx={{ justifyContent: "flex-end" }}>
         <Stack direction="row" justifyContent="flex-end" alignItems="center">
@@ -186,38 +252,41 @@ const TreasureCard = ({
       </CardActions>
       <Collapse in={expanded}>
         <CardContent sx={{ paddingY: 0 }}>
-          <Stack
-            direction="row"
-            width="100%"
-            height="3rem"
-            px="0.75rem"
-            py="0.5rem"
-            justifyContent="space-between"
-            alignItems="center"
-            mb="1rem"
-            bgcolor="#7B869A1A"
-            borderRadius="0.375rem"
-          >
+          {robbingTreasures > 0 && (
             <Stack
               direction="row"
+              width="100%"
+              height="3rem"
+              px="0.75rem"
+              py="0.5rem"
               justifyContent="space-between"
               alignItems="center"
+              mb="1rem"
+              bgcolor="#7B869A1A"
+              borderRadius="0.375rem"
             >
-              <Image
-                src="/images/winner.svg"
-                width={32}
-                height={32}
-                alt={"Winner"}
-              />
+              <Stack
+                direction="row"
+                justifyContent="space-between"
+                alignItems="center"
+              >
+                <Image
+                  src="/images/winner.svg"
+                  width={32}
+                  height={32}
+                  alt={"Winner"}
+                />
+                <Typography fontSize="1rem" fontWeight="500" color="#535A66">
+                  Current Winner
+                </Typography>
+              </Stack>
               <Typography fontSize="1rem" fontWeight="500" color="#535A66">
-                Current Winner
+                {displayShortString(winner, 4, 4)}{" "}
+                {userAddress === winner && `(You)`}
               </Typography>
             </Stack>
-            <Typography fontSize="1rem" fontWeight="500" color="#535A66">
-              {displayShortString(winner, 4, 4)}{" "}
-              {userAddress === winner && `(You)`}
-            </Typography>
-          </Stack>
+          )}
+
           <Stack width="100%" justifyContent="flex-start" spacing="12px">
             {/* Your Amount */}
             <Stack
@@ -230,7 +299,7 @@ const TreasureCard = ({
                 Your Amount
               </Typography>
               <Typography fontSize="1rem" fontWeight="400" color="#7B869A">
-                {userAmount} U
+                {formatBigNumber(userAmount.toString(), 18, 2)} U
               </Typography>
             </Stack>
             {/* Total Amount */}
@@ -245,7 +314,7 @@ const TreasureCard = ({
                 Total Amount
               </Typography>
               <Typography fontSize="1rem" fontWeight="400" color="#7B869A">
-                {formatNumber(totalFeeAmount)} U
+                {formatBigNumber(totalFeeAmount.toString(), 18, 2)} U
               </Typography>
             </Stack>
             {/* Host */}

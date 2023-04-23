@@ -1,11 +1,11 @@
 import React, { useMemo } from "react";
 import { useCall, useEthers, ThunderCoreTestnet } from "@usedapp/core";
-import TreasuryHuntABI from "@/abis/TreasuryHunt.json";
+import TreasuryHuntABI from "@/abis/TreasureHunt.json";
 import { utils } from "ethers";
 import { Contract, ContractInterface } from "@ethersproject/contracts";
 import ADDRESSES from "@/constants/addresses";
 import { TypedContract } from "@usedapp/core/dist/esm/src/model";
-import { TreasuryHunt } from "@/abis/types/TreasuryHunt";
+import { TreasureHunt } from "@/abis/types/TreasureHunt";
 
 export function useContract<T extends Contract>(
   address: string,
@@ -19,7 +19,7 @@ export function useContract<T extends Contract>(
 export const useTreasuryHuntContract = () => {
   const { chainId } = useEthers();
   const address = ADDRESSES[chainId ?? ThunderCoreTestnet.chainId];
-  return useContract<TreasuryHunt>(
+  return useContract<TreasureHunt>(
     address.TREASURY_HUNT,
     new utils.Interface(TreasuryHuntABI.abi)
   );

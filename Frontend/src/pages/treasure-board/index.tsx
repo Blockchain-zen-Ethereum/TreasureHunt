@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Head from "next/head";
 import Image from "next/image";
 import { Inter } from "next/font/google";
@@ -11,6 +11,7 @@ import {
   Tab,
   Typography,
   IconButton,
+  Slide,
 } from "@mui/material";
 import styles from "@/styles/Home.module.css";
 import { useEthers } from "@usedapp/core";
@@ -21,13 +22,32 @@ import TreasureCard from "@/components/TreasureCard";
 import TabButtons from "@/components/TabButtons";
 import MenuIcon from "@mui/icons-material/Menu";
 import { useGetGameIdCounts } from "@/hooks/useGetGameIdCounts";
+import { useGetGameList } from "@/hooks/useGetGameList";
+import { BigNumber } from "ethers";
 
 export default function TreasureBoard() {
   const [innerHeight, setInnerHeight] = useState<number>(0);
   const [scrollHeight, setScrollHeight] = useState<number>(0);
   const { account, chainId } = useEthers();
   const gameIdCounts = useGetGameIdCounts();
+  const gameList = useGetGameList();
   const [value, setValue] = React.useState(0);
+  const [checked, setChecked] = React.useState(false);
+  const containerRef = React.useRef(null);
+  const currentDate = new Date().getTime() / 1000;
+
+  const onTimeGameList = gameList.filter(
+    (game) => Number(game.deadline.toString()) > currentDate
+  );
+
+  const historyGameList = gameList.filter(
+    (game) => Number(game.deadline.toString()) <= currentDate
+  );
+  // console.log("gameList", gameList);
+
+  const handleSlideChange = () => {
+    setChecked((prev) => !prev);
+  };
 
   const handleTabChange = (newValue: React.SetStateAction<number>) => {
     setValue(newValue);
@@ -60,6 +80,7 @@ export default function TreasureBoard() {
             padding: 0,
             margin: 0,
           }}
+          onClick={handleSlideChange}
         >
           <MenuIcon sx={{ fontSize: "2rem" }} />
         </IconButton>
@@ -69,8 +90,8 @@ export default function TreasureBoard() {
         <TabButtons
           value={value}
           handleChange={handleTabChange}
-          huntingCounts={gameIdCounts}
-          historyCounts={1}
+          huntingCounts={onTimeGameList.length}
+          historyCounts={historyGameList.length}
         />
       )}
       <Box
@@ -80,43 +101,111 @@ export default function TreasureBoard() {
         mt="1.75rem"
         sx={{ overflowY: "scroll" }}
       >
-        <Stack width="100%" spacing={3} pb="2rem">
-          {!account ? (
-            <>
-              <TreasureCard
-                userAddress={""}
-                host={"0x79603CBB5c09ABBC80Ec4113C2dc3d3830e7271d"}
-                prizeAmount={1}
-                totalFeeAmount={20367}
-                userAmount={4}
-                creationDate={1682265600}
-                deadline={1682267000}
-                winner="0x79603CBB5c09ABBC80Ec4113C2dc3d3830e7271d"
-                robbingTreasures={12}
-                currentPrice={3}
-              />
-            </>
-          ) : (
-            <>
-              <TreasureCard
-                userAddress={account}
-                host={"0x79603CBB5c09ABBC80Ec4113C2dc3d3830e7271d"}
-                prizeAmount={1}
-                totalFeeAmount={20367}
-                userAmount={4}
-                creationDate={1682265600}
-                deadline={1732267000}
-                winner="0x79603CBB5c09ABBC80Ec4113C2dc3d3830e7271d"
-                robbingTreasures={12}
-                currentPrice={3}
-              />
-              {/* <TreasureCard />
+        {value === 0 ? (
+          <Stack width="100%" spacing={3} pb="2rem">
+            {!account ? (
+              <>
+                <TreasureCard
+                  isHunting={true}
+                  userAddress={""}
+                  gameId={BigNumber.from(1)}
+                  isSettled={false}
+                  host={"0x79603CBB5c09ABBC80Ec4113C2dc3d3830e7271d"}
+                  prizeAmount={BigNumber.from("100000000000000000")}
+                  totalFeeAmount={BigNumber.from("2036700000000000000000")}
+                  creationDate={1682265600}
+                  deadline={1682267000}
+                  winner="0x79603CBB5c09ABBC80Ec4113C2dc3d3830e7271d"
+                  robbingTreasures={12}
+                  currentPrice={3}
+                />
+              </>
+            ) : (
+              <>
+                {onTimeGameList.length > 0 &&
+                  onTimeGameList.map((game, index) => (
+                    <TreasureCard
+                      isHunting={true}
+                      key={index}
+                      userAddress={account}
+                      gameId={game.gameId}
+                      isSettled={game.isSettled}
+                      host={game.creator}
+                      prizeAmount={game.prizeAmount}
+                      totalFeeAmount={game.totalFeeAmount}
+                      creationDate={Number(game.startTime.toString())}
+                      deadline={Number(game.deadline.toString())}
+                      winner={game.winner}
+                      robbingTreasures={game.lottery.tickets.length}
+                      currentPrice={1}
+                    />
+                  ))}
+
+                {/* <TreasureCard />
               <TreasureCard />
               <TreasureCard /> */}
-            </>
-          )}
-        </Stack>
+              </>
+            )}
+          </Stack>
+        ) : (
+          <Stack width="100%" spacing={3} pb="2rem">
+            {!account ? (
+              <>
+                <TreasureCard
+                  isHunting={false}
+                  userAddress={""}
+                  gameId={BigNumber.from(1)}
+                  isSettled={false}
+                  host={"0x79603CBB5c09ABBC80Ec4113C2dc3d3830e7271d"}
+                  prizeAmount={BigNumber.from("100000000000000000")}
+                  totalFeeAmount={BigNumber.from("2036700000000000000000")}
+                  creationDate={1682265600}
+                  deadline={1682267000}
+                  winner="0x79603CBB5c09ABBC80Ec4113C2dc3d3830e7271d"
+                  robbingTreasures={12}
+                  currentPrice={3}
+                />
+              </>
+            ) : (
+              <>
+                {historyGameList.length > 0 &&
+                  historyGameList.map((game, index) => (
+                    <TreasureCard
+                      isHunting={false}
+                      key={index}
+                      userAddress={account}
+                      gameId={game.gameId}
+                      isSettled={game.isSettled}
+                      host={game.creator}
+                      prizeAmount={game.prizeAmount}
+                      totalFeeAmount={game.totalFeeAmount}
+                      creationDate={Number(game.startTime.toString())}
+                      deadline={Number(game.deadline.toString())}
+                      winner={game.winner}
+                      robbingTreasures={game.lottery.tickets.length}
+                      currentPrice={1}
+                    />
+                  ))}
+
+                {/* <TreasureCard />
+              <TreasureCard />
+              <TreasureCard /> */}
+              </>
+            )}
+          </Stack>
+        )}
       </Box>
+      {/* <Slide direction="right" in={checked} mountOnEnter unmountOnExit>
+        <Box
+          width="100vw"
+          height={innerHeight ? `${innerHeight}px` : "100%"}
+          sx={{
+            bgcolor: "#000",
+          }}
+        >
+          Test
+        </Box>
+      </Slide> */}
     </>
   );
 }
