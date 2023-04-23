@@ -27,7 +27,7 @@ import type {
   PromiseOrValue,
 } from "./common";
 
-export declare namespace TreasuryHunt {
+export declare namespace TreasureHunt {
   export type LotteryStruct = {
     randomNumber: PromiseOrValue<BigNumberish>;
     winner: PromiseOrValue<string>;
@@ -39,9 +39,55 @@ export declare namespace TreasuryHunt {
     winner: string;
     tickets: string[];
   };
+
+  export type GameStruct = {
+    isSettled: PromiseOrValue<boolean>;
+    gameId: PromiseOrValue<BigNumberish>;
+    creator: PromiseOrValue<string>;
+    prizeAmount: PromiseOrValue<BigNumberish>;
+    totalFeeAmount: PromiseOrValue<BigNumberish>;
+    startTime: PromiseOrValue<BigNumberish>;
+    deadline: PromiseOrValue<BigNumberish>;
+    winner: PromiseOrValue<string>;
+    lottery: TreasureHunt.LotteryStruct;
+  };
+
+  export type GameStructOutput = [
+    boolean,
+    BigNumber,
+    string,
+    BigNumber,
+    BigNumber,
+    BigNumber,
+    BigNumber,
+    string,
+    TreasureHunt.LotteryStructOutput
+  ] & {
+    isSettled: boolean;
+    gameId: BigNumber;
+    creator: string;
+    prizeAmount: BigNumber;
+    totalFeeAmount: BigNumber;
+    startTime: BigNumber;
+    deadline: BigNumber;
+    winner: string;
+    lottery: TreasureHunt.LotteryStructOutput;
+  };
+
+  export type RewardDistributionStruct = {
+    gameId: PromiseOrValue<BigNumberish>;
+    isClaimed: PromiseOrValue<boolean>;
+    amount: PromiseOrValue<BigNumberish>;
+  };
+
+  export type RewardDistributionStructOutput = [
+    BigNumber,
+    boolean,
+    BigNumber
+  ] & { gameId: BigNumber; isClaimed: boolean; amount: BigNumber };
 }
 
-export interface TreasuryHuntInterface extends utils.Interface {
+export interface TreasureHuntInterface extends utils.Interface {
   functions: {
     "DEFAULT_FEE_INCREASE_DURATION()": FunctionFragment;
     "DEFAULT_GAME_DURATION()": FunctionFragment;
@@ -61,7 +107,11 @@ export interface TreasuryHuntInterface extends utils.Interface {
     "gameIdCounter()": FunctionFragment;
     "games(uint256)": FunctionFragment;
     "getGameParticipantList(uint256,uint256,uint256)": FunctionFragment;
+    "getGames()": FunctionFragment;
     "getLotteryInfo(uint256)": FunctionFragment;
+    "getPlayerCreatorRewardList()": FunctionFragment;
+    "getPlayerLotteryRewardList()": FunctionFragment;
+    "getPlayerWinnerPrizeList()": FunctionFragment;
     "initFeeAmount()": FunctionFragment;
     "joinGame(uint256)": FunctionFragment;
     "lotteryRewardList(address,uint256)": FunctionFragment;
@@ -95,7 +145,11 @@ export interface TreasuryHuntInterface extends utils.Interface {
       | "gameIdCounter"
       | "games"
       | "getGameParticipantList"
+      | "getGames"
       | "getLotteryInfo"
+      | "getPlayerCreatorRewardList"
+      | "getPlayerLotteryRewardList"
+      | "getPlayerWinnerPrizeList"
       | "initFeeAmount"
       | "joinGame"
       | "lotteryRewardList"
@@ -182,9 +236,22 @@ export interface TreasuryHuntInterface extends utils.Interface {
       PromiseOrValue<BigNumberish>
     ]
   ): string;
+  encodeFunctionData(functionFragment: "getGames", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "getLotteryInfo",
     values: [PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getPlayerCreatorRewardList",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getPlayerLotteryRewardList",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getPlayerWinnerPrizeList",
+    values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "initFeeAmount",
@@ -285,8 +352,21 @@ export interface TreasuryHuntInterface extends utils.Interface {
     functionFragment: "getGameParticipantList",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "getGames", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "getLotteryInfo",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getPlayerCreatorRewardList",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getPlayerLotteryRewardList",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getPlayerWinnerPrizeList",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -341,12 +421,12 @@ export type OwnershipTransferredEvent = TypedEvent<
 export type OwnershipTransferredEventFilter =
   TypedEventFilter<OwnershipTransferredEvent>;
 
-export interface TreasuryHunt extends BaseContract {
+export interface TreasureHunt extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
 
-  interface: TreasuryHuntInterface;
+  interface: TreasureHuntInterface;
 
   queryFilter<TEvent extends TypedEvent>(
     event: TypedEventFilter<TEvent>,
@@ -446,7 +526,7 @@ export interface TreasuryHunt extends BaseContract {
         BigNumber,
         BigNumber,
         string,
-        TreasuryHunt.LotteryStructOutput
+        TreasureHunt.LotteryStructOutput
       ] & {
         isSettled: boolean;
         gameId: BigNumber;
@@ -456,7 +536,7 @@ export interface TreasuryHunt extends BaseContract {
         startTime: BigNumber;
         deadline: BigNumber;
         winner: string;
-        lottery: TreasuryHunt.LotteryStructOutput;
+        lottery: TreasureHunt.LotteryStructOutput;
       }
     >;
 
@@ -466,6 +546,10 @@ export interface TreasuryHunt extends BaseContract {
       _end: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<[string[]]>;
+
+    getGames(
+      overrides?: CallOverrides
+    ): Promise<[TreasureHunt.GameStructOutput[]]>;
 
     getLotteryInfo(
       _gameId: PromiseOrValue<BigNumberish>,
@@ -477,6 +561,18 @@ export interface TreasuryHunt extends BaseContract {
         winner: string;
       }
     >;
+
+    getPlayerCreatorRewardList(
+      overrides?: CallOverrides
+    ): Promise<[TreasureHunt.RewardDistributionStructOutput[]]>;
+
+    getPlayerLotteryRewardList(
+      overrides?: CallOverrides
+    ): Promise<[TreasureHunt.RewardDistributionStructOutput[]]>;
+
+    getPlayerWinnerPrizeList(
+      overrides?: CallOverrides
+    ): Promise<[TreasureHunt.RewardDistributionStructOutput[]]>;
 
     initFeeAmount(overrides?: CallOverrides): Promise<[BigNumber]>;
 
@@ -607,7 +703,7 @@ export interface TreasuryHunt extends BaseContract {
       BigNumber,
       BigNumber,
       string,
-      TreasuryHunt.LotteryStructOutput
+      TreasureHunt.LotteryStructOutput
     ] & {
       isSettled: boolean;
       gameId: BigNumber;
@@ -617,7 +713,7 @@ export interface TreasuryHunt extends BaseContract {
       startTime: BigNumber;
       deadline: BigNumber;
       winner: string;
-      lottery: TreasuryHunt.LotteryStructOutput;
+      lottery: TreasureHunt.LotteryStructOutput;
     }
   >;
 
@@ -627,6 +723,8 @@ export interface TreasuryHunt extends BaseContract {
     _end: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
   ): Promise<string[]>;
+
+  getGames(overrides?: CallOverrides): Promise<TreasureHunt.GameStructOutput[]>;
 
   getLotteryInfo(
     _gameId: PromiseOrValue<BigNumberish>,
@@ -638,6 +736,18 @@ export interface TreasuryHunt extends BaseContract {
       winner: string;
     }
   >;
+
+  getPlayerCreatorRewardList(
+    overrides?: CallOverrides
+  ): Promise<TreasureHunt.RewardDistributionStructOutput[]>;
+
+  getPlayerLotteryRewardList(
+    overrides?: CallOverrides
+  ): Promise<TreasureHunt.RewardDistributionStructOutput[]>;
+
+  getPlayerWinnerPrizeList(
+    overrides?: CallOverrides
+  ): Promise<TreasureHunt.RewardDistributionStructOutput[]>;
 
   initFeeAmount(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -770,7 +880,7 @@ export interface TreasuryHunt extends BaseContract {
         BigNumber,
         BigNumber,
         string,
-        TreasuryHunt.LotteryStructOutput
+        TreasureHunt.LotteryStructOutput
       ] & {
         isSettled: boolean;
         gameId: BigNumber;
@@ -780,7 +890,7 @@ export interface TreasuryHunt extends BaseContract {
         startTime: BigNumber;
         deadline: BigNumber;
         winner: string;
-        lottery: TreasuryHunt.LotteryStructOutput;
+        lottery: TreasureHunt.LotteryStructOutput;
       }
     >;
 
@@ -790,6 +900,10 @@ export interface TreasuryHunt extends BaseContract {
       _end: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<string[]>;
+
+    getGames(
+      overrides?: CallOverrides
+    ): Promise<TreasureHunt.GameStructOutput[]>;
 
     getLotteryInfo(
       _gameId: PromiseOrValue<BigNumberish>,
@@ -801,6 +915,18 @@ export interface TreasuryHunt extends BaseContract {
         winner: string;
       }
     >;
+
+    getPlayerCreatorRewardList(
+      overrides?: CallOverrides
+    ): Promise<TreasureHunt.RewardDistributionStructOutput[]>;
+
+    getPlayerLotteryRewardList(
+      overrides?: CallOverrides
+    ): Promise<TreasureHunt.RewardDistributionStructOutput[]>;
+
+    getPlayerWinnerPrizeList(
+      overrides?: CallOverrides
+    ): Promise<TreasureHunt.RewardDistributionStructOutput[]>;
 
     initFeeAmount(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -936,10 +1062,18 @@ export interface TreasuryHunt extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    getGames(overrides?: CallOverrides): Promise<BigNumber>;
+
     getLotteryInfo(
       _gameId: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
+
+    getPlayerCreatorRewardList(overrides?: CallOverrides): Promise<BigNumber>;
+
+    getPlayerLotteryRewardList(overrides?: CallOverrides): Promise<BigNumber>;
+
+    getPlayerWinnerPrizeList(overrides?: CallOverrides): Promise<BigNumber>;
 
     initFeeAmount(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -1062,8 +1196,22 @@ export interface TreasuryHunt extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    getGames(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     getLotteryInfo(
       _gameId: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getPlayerCreatorRewardList(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getPlayerLotteryRewardList(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getPlayerWinnerPrizeList(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
