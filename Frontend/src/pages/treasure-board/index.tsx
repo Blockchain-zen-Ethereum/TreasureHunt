@@ -12,6 +12,7 @@ import {
   Typography,
   IconButton,
   Slide,
+  MenuItem
 } from "@mui/material";
 import styles from "@/styles/Home.module.css";
 import { useEthers } from "@usedapp/core";
@@ -25,8 +26,19 @@ import { useGetGameIdCounts } from "@/hooks/useGetGameIdCounts";
 import { useGetGameList } from "@/hooks/useGetGameList";
 import { BigNumber } from "ethers";
 import { formatEther } from "ethers/lib/utils";
+import CloseIcon from "@mui/icons-material/Close";
+import HomeIcon from "@mui/icons-material/Home";
+import AddCircleIcon from '@mui/icons-material/AddCircle';
+import HistoryIcon from '@mui/icons-material/History';
+import Paper from '@mui/material/Paper';
+import MenuList from '@mui/material/MenuList';
+import ListItemText from '@mui/material/ListItemText';
+import ListItemIcon from '@mui/material/ListItemIcon';
+import ContentPaste from '@mui/icons-material/ContentPaste';
+import { useRouter } from "next/router";
 
 export default function TreasureBoard() {
+  const router = useRouter();
   const [innerHeight, setInnerHeight] = useState<number>(0);
   const [scrollHeight, setScrollHeight] = useState<number>(0);
   const { account, chainId } = useEthers();
@@ -36,6 +48,7 @@ export default function TreasureBoard() {
   const [checked, setChecked] = React.useState(false);
   const containerRef = React.useRef(null);
   const currentDate = new Date().getTime() / 1000;
+  const [showMenu, setShowMenu] = useState<boolean>(false);
 
   const onTimeGameList = gameList.filter(
     (game) => Number(game.deadline.toString()) > currentDate
@@ -63,6 +76,22 @@ export default function TreasureBoard() {
     );
   }, [account]);
 
+  const handleShowMenu = () => {
+    setShowMenu(!showMenu);
+  };
+
+  const handleHome = () => {
+    router.push("/");
+  };
+
+  const handleCreate = () => {
+    router.push("/create");
+  };
+
+  const handleHistory = () => {
+    router.push("/treasure-board");
+  };
+
   return (
     <>
       <Box
@@ -72,20 +101,70 @@ export default function TreasureBoard() {
           paddingY: "0.375rem",
         }}
       >
-        <IconButton
+        <Button 
+          onClick={handleShowMenu}
           aria-label="menu"
           sx={{
+            minWidth: "2rem",
             color: "#7B869A",
             width: "2rem",
             height: "2rem",
             padding: 0,
             margin: 0,
           }}
-          onClick={handleSlideChange}
         >
-          <MenuIcon sx={{ fontSize: "2rem" }} />
-        </IconButton>
+          { !showMenu && <MenuIcon sx={{ fontSize: "2rem" }} /> }
+          { showMenu && <CloseIcon sx={{ fontSize: "2rem" }} /> }
+        </Button>
       </Box>
+      { showMenu && <Paper sx={{
+          width: '100%',
+          position: "absolute",
+          maxWidth: "395px",
+          zIndex: 100,
+          height: "100%",
+        }}>
+        <MenuList>
+          <MenuItem sx={{
+              margin: '20px 0',
+            }}
+            onClick={handleHome}
+          >
+            <ListItemIcon>
+              <HomeIcon fontSize="medium" />
+            </ListItemIcon>
+            <ListItemText>Home</ListItemText>
+          </MenuItem>
+          <MenuItem sx={{
+              margin: '20px 0',
+            }}
+            onClick={handleCreate}
+          >
+            <ListItemIcon>
+              <AddCircleIcon fontSize="medium" />
+            </ListItemIcon>
+            <ListItemText>Create</ListItemText>
+          </MenuItem>
+          <MenuItem sx={{
+            margin: '20px 0',
+          }} disabled>
+            <ListItemIcon>
+              <ContentPaste fontSize="medium" />
+            </ListItemIcon>
+            <ListItemText>Stake</ListItemText>
+          </MenuItem>
+          <MenuItem sx={{
+              margin: '20px 0',
+            }}
+            onClick={handleHistory}
+          >
+            <ListItemIcon>
+              <HistoryIcon fontSize="medium" />
+            </ListItemIcon>
+            <ListItemText>Personal History</ListItemText>
+          </MenuItem>
+        </MenuList>
+      </Paper>}
       <WalletConnectButton />
       {account && (
         <TabButtons

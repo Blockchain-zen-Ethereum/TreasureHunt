@@ -86,7 +86,13 @@ export default function Create({
           { showMenu && <CloseIcon sx={{ fontSize: "2rem" }} /> }
         </Button>
       </Box>
-      { showMenu && <Paper sx={{ width: '100%', maxWidth: '100%' }}>
+      { showMenu && <Paper sx={{
+        width: '100%',
+        position: "absolute",
+        maxWidth: "395px",
+        zIndex: 100,
+        height: "100%",
+      }}>
         <MenuList>
           <MenuItem sx={{
               margin: '20px 0',
@@ -128,7 +134,10 @@ export default function Create({
           </MenuItem>
         </MenuList>
       </Paper>}
-      <Container style={{height:"100%"}}>
+      <Container style={{
+        height:"1000px",
+        display: "block"
+      }}>
         <Typography variant="h4" component="div" margin="20px 0" fontWeight="500">
           Create
         </Typography>
