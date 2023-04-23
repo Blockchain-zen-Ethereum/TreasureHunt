@@ -1,9 +1,11 @@
 import { Falsy, useContractFunction, useEthers } from "@usedapp/core";
 import { useTreasuryHuntContract } from "./useContract";
 
-export const useJoinGame = async (gameId: number) => {
+export const useJoinGame = () => {
   const contract = useTreasuryHuntContract();
-  const { state, send } = useContractFunction(contract, "joinGame");
-  const tx = await send(gameId);
-  return { state, tx };
+  const transactionName = "Join Game";
+  const { state, send } = useContractFunction(contract, "joinGame", {
+    transactionName,
+  });
+  return { state, send };
 };
