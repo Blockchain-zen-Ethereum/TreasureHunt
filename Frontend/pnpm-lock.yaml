@@ -7,6 +7,7 @@ specifiers:
   '@ethersproject/bytes': ^5.7.0
   '@ethersproject/contracts': ^5.7.0
   '@ethersproject/providers': ^5.7.2
+  '@ethersproject/units': ^5.7.0
   '@mui/icons-material': ^5.11.16
   '@mui/material': ^5.12.1
   '@types/big.js': ^6.1.6
@@ -27,6 +28,7 @@ dependencies:
   '@emotion/react': 11.10.6_24ukasupqqblpyncii3ycicuiu
   '@emotion/styled': 11.10.6_ymduhmyhfisotm3njv6u3c3lva
   '@ethersproject/contracts': 5.7.0
+  '@ethersproject/units': 5.7.0
   '@mui/icons-material': 5.11.16_evv3re3xuh5fdswgn2achfnnnq
   '@mui/material': 5.12.1_nvsgjbp4mah6gsuo4zrv73sale
   '@types/node': 18.15.13

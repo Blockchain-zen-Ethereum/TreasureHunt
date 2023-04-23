@@ -19,15 +19,16 @@ export function calculateDaysBetweenDates(
   return days;
 }
 
-export function countdownTimer(createTimestamp: number, endTimestamp: number) {
+export function countdownTimer(endTimestamp: number) {
   const oneSecond = 1000;
   const oneMinute = oneSecond * 60;
   const oneHour = oneMinute * 60;
   const oneDay = oneHour * 24;
-  const differenceInTime = endTimestamp - createTimestamp;
+  const differenceInTime = endTimestamp * 1000 - new Date().getTime();
   const leftTime = differenceInTime % oneDay;
   const hours = Math.floor(leftTime / oneHour);
   const minutes = Math.floor((leftTime % oneHour) / oneMinute);
   const seconds = Math.floor((leftTime % oneMinute) / oneSecond);
+
   return `${hours}:${minutes}:${seconds}`;
 }
