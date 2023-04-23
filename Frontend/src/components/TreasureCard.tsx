@@ -72,10 +72,10 @@ const TreasureCard = ({
   robbingTreasures,
   currentPrice,
 }: TreasureCardProps) => {
-  const { chainId } = useEthers();
+  const { account, chainId } = useEthers();
   const currentDate = new Date();
   const [expanded, setExpanded] = useState(false);
-  const userAmount = useGetUserAmount(userAddress, Number(gameId.toString()));
+  const userAmount = useGetUserAmount(account ?? "", Number(gameId.toString()));
   const treasureHuntAddress =
     ADDRESSES[chainId ?? ThunderCoreTestnet.chainId].TREASURY_HUNT;
   const { state: stateApproveUSDT, send: sendApproveUSDT } = useApproveUSDT();
@@ -323,7 +323,7 @@ const TreasureCard = ({
                 Your Amount
               </Typography>
               <Typography fontSize="1rem" fontWeight="400" color="#7B869A">
-                {formatBigNumber(userAmount.toString(), 18, 2)} U
+                {formatBigNumber(userAmount.toString(), 6, 2)} U
               </Typography>
             </Stack>
             {/* Total Amount */}
@@ -338,7 +338,7 @@ const TreasureCard = ({
                 Total Amount
               </Typography>
               <Typography fontSize="1rem" fontWeight="400" color="#7B869A">
-                {formatBigNumber(totalFeeAmount.toString(), 18, 2)} U
+                {formatBigNumber(totalFeeAmount.toString(), 6, 2)} U
               </Typography>
             </Stack>
             {/* Host */}

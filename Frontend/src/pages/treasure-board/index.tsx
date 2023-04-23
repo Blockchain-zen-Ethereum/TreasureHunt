@@ -24,6 +24,7 @@ import MenuIcon from "@mui/icons-material/Menu";
 import { useGetGameIdCounts } from "@/hooks/useGetGameIdCounts";
 import { useGetGameList } from "@/hooks/useGetGameList";
 import { BigNumber } from "ethers";
+import { formatEther } from "ethers/lib/utils";
 
 export default function TreasureBoard() {
   const [innerHeight, setInnerHeight] = useState<number>(0);
