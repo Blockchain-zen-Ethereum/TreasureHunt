@@ -252,38 +252,41 @@ const TreasureCard = ({
       </CardActions>
       <Collapse in={expanded}>
         <CardContent sx={{ paddingY: 0 }}>
-          <Stack
-            direction="row"
-            width="100%"
-            height="3rem"
-            px="0.75rem"
-            py="0.5rem"
-            justifyContent="space-between"
-            alignItems="center"
-            mb="1rem"
-            bgcolor="#7B869A1A"
-            borderRadius="0.375rem"
-          >
+          {robbingTreasures > 0 && (
             <Stack
               direction="row"
+              width="100%"
+              height="3rem"
+              px="0.75rem"
+              py="0.5rem"
               justifyContent="space-between"
               alignItems="center"
+              mb="1rem"
+              bgcolor="#7B869A1A"
+              borderRadius="0.375rem"
             >
-              <Image
-                src="/images/winner.svg"
-                width={32}
-                height={32}
-                alt={"Winner"}
-              />
+              <Stack
+                direction="row"
+                justifyContent="space-between"
+                alignItems="center"
+              >
+                <Image
+                  src="/images/winner.svg"
+                  width={32}
+                  height={32}
+                  alt={"Winner"}
+                />
+                <Typography fontSize="1rem" fontWeight="500" color="#535A66">
+                  Current Winner
+                </Typography>
+              </Stack>
               <Typography fontSize="1rem" fontWeight="500" color="#535A66">
-                Current Winner
+                {displayShortString(winner, 4, 4)}{" "}
+                {userAddress === winner && `(You)`}
               </Typography>
             </Stack>
-            <Typography fontSize="1rem" fontWeight="500" color="#535A66">
-              {displayShortString(winner, 4, 4)}{" "}
-              {userAddress === winner && `(You)`}
-            </Typography>
-          </Stack>
+          )}
+
           <Stack width="100%" justifyContent="flex-start" spacing="12px">
             {/* Your Amount */}
             <Stack
