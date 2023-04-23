@@ -27,6 +27,7 @@ import { useJoinGame } from "@/hooks/useJoinGame";
 import { useApproveUSDT } from "@/hooks/useApproveUSDT";
 import ADDRESSES from "@/constants/addresses";
 import { useEthers, ThunderCoreTestnet } from "@usedapp/core";
+import { useGetUSDTAllowance } from "@/hooks/useGetUSDTAllowance";
 // import { formatEther, parseEther } from "@ethersproject/units";
 
 interface ExpandMoreProps extends IconButtonProps {
@@ -78,6 +79,7 @@ const TreasureCard = ({
   const userAmount = useGetUserAmount(account ?? "", Number(gameId.toString()));
   const treasureHuntAddress =
     ADDRESSES[chainId ?? ThunderCoreTestnet.chainId].TREASURY_HUNT;
+  const usdtAllowance = useGetUSDTAllowance();
   const { state: stateApproveUSDT, send: sendApproveUSDT } = useApproveUSDT();
   const { state: stateJoinGame, send: sendJoinGame } = useJoinGame();
   const isParticipated = Number(userAmount.toString()) > 0;
@@ -92,7 +94,7 @@ const TreasureCard = ({
   };
 
   const handleJoinGame = async () => {
-    if (!isParticipated) {
+    if (!isParticipated || BigNumber.from(usdtAllowance).lt("1000000")) {
       const approveTx = await sendApproveUSDT(
         treasureHuntAddress,
         "1000000000000"

@@ -16,14 +16,26 @@ import {
   TextField
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
+import CloseIcon from "@mui/icons-material/Close";
+import HomeIcon from "@mui/icons-material/Home";
+import AddCircleIcon from '@mui/icons-material/AddCircle';
+import HistoryIcon from '@mui/icons-material/History';
+import Paper from '@mui/material/Paper';
+import MenuList from '@mui/material/MenuList';
+import ListItemText from '@mui/material/ListItemText';
+import ListItemIcon from '@mui/material/ListItemIcon';
+import ContentPaste from '@mui/icons-material/ContentPaste';
+import { useRouter } from "next/router";
 
 export default function Create({
   children,
 }: {
   children?: React.ReactNode;
 }) {
+  const router = useRouter();
   const [selectedToken, setSelectedToken] = useState<string>('token');
   const [innerHeight, setInnerHeight] = useState<string>("0px");
+  const [showMenu, setShowMenu] = useState<boolean>(false);
 
   useEffect(() => {
     setInnerHeight(window.innerHeight.toString() + "px");
@@ -31,6 +43,22 @@ export default function Create({
 
   const handleTokenChange = (event: React.ChangeEvent<HTMLInputElement>, value: string) => {
     setSelectedToken(value);
+  };
+
+  const handleShowMenu = () => {
+    setShowMenu(!showMenu);
+  };
+
+  const handleHome = () => {
+    router.push("/");
+  };
+
+  const handleCreate = () => {
+    router.push("/create");
+  };
+
+  const handleHistory = () => {
+    router.push("/treasure-board");
   };
 
   return (
@@ -42,9 +70,11 @@ export default function Create({
           paddingY: "0.375rem",
         }}
       >
-        <IconButton
+        <Button 
+          onClick={handleShowMenu}
           aria-label="menu"
           sx={{
+            minWidth: "2rem",
             color: "#7B869A",
             width: "2rem",
             height: "2rem",
@@ -52,9 +82,52 @@ export default function Create({
             margin: 0,
           }}
         >
-          <MenuIcon sx={{ fontSize: "2rem" }} />
-        </IconButton>
+          { !showMenu && <MenuIcon sx={{ fontSize: "2rem" }} /> }
+          { showMenu && <CloseIcon sx={{ fontSize: "2rem" }} /> }
+        </Button>
       </Box>
+      { showMenu && <Paper sx={{ width: '100%', maxWidth: '100%' }}>
+        <MenuList>
+          <MenuItem sx={{
+              margin: '20px 0',
+            }}
+            onClick={handleHome}
+          >
+            <ListItemIcon>
+              <HomeIcon fontSize="medium" />
+            </ListItemIcon>
+            <ListItemText>Home</ListItemText>
+          </MenuItem>
+          <MenuItem sx={{
+              margin: '20px 0',
+            }}
+            onClick={handleCreate}
+          >
+            <ListItemIcon>
+              <AddCircleIcon fontSize="medium" />
+            </ListItemIcon>
+            <ListItemText>Create</ListItemText>
+          </MenuItem>
+          <MenuItem sx={{
+            margin: '20px 0',
+          }} disabled>
+            <ListItemIcon>
+              <ContentPaste fontSize="medium" />
+            </ListItemIcon>
+            <ListItemText>Stake</ListItemText>
+          </MenuItem>
+          <MenuItem sx={{
+              margin: '20px 0',
+            }}
+            onClick={handleHistory}
+          >
+            <ListItemIcon>
+              <HistoryIcon fontSize="medium" />
+            </ListItemIcon>
+            <ListItemText>Personal History</ListItemText>
+          </MenuItem>
+        </MenuList>
+      </Paper>}
       <Container style={{height:"100%"}}>
         <Typography variant="h4" component="div" margin="20px 0" fontWeight="500">
           Create
