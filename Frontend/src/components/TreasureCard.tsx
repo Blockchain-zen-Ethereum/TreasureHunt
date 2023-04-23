@@ -24,6 +24,9 @@ import {
 import { BigNumber } from "ethers";
 import { useGetUserAmount } from "@/hooks/useGetUserAmount";
 import { useJoinGame } from "@/hooks/useJoinGame";
+import { useApproveUSDT } from "@/hooks/useApproveUSDT";
+import ADDRESSES from "@/constants/addresses";
+import { useEthers, ThunderCoreTestnet } from "@usedapp/core";
 // import { formatEther, parseEther } from "@ethersproject/units";
 
 interface ExpandMoreProps extends IconButtonProps {
@@ -69,9 +72,13 @@ const TreasureCard = ({
   robbingTreasures,
   currentPrice,
 }: TreasureCardProps) => {
+  const { account, chainId } = useEthers();
   const currentDate = new Date();
   const [expanded, setExpanded] = useState(false);
-  const userAmount = useGetUserAmount(userAddress, Number(gameId.toString()));
+  const userAmount = useGetUserAmount(account ?? "", Number(gameId.toString()));
+  const treasureHuntAddress =
+    ADDRESSES[chainId ?? ThunderCoreTestnet.chainId].TREASURY_HUNT;
+  const { state: stateApproveUSDT, send: sendApproveUSDT } = useApproveUSDT();
   const { state: stateJoinGame, send: sendJoinGame } = useJoinGame();
   const isParticipated = Number(userAmount.toString()) > 0;
   const isOverDeadline = currentDate.getTime() > deadline * 1000;
@@ -85,6 +92,14 @@ const TreasureCard = ({
   };
 
   const handleJoinGame = async () => {
+    if (!isParticipated) {
+      const approveTx = await sendApproveUSDT(
+        treasureHuntAddress,
+        "1000000000000"
+      );
+      console.log("approveTx", approveTx);
+      console.log("stateApproveUSDT", stateApproveUSDT);
+    }
     console.log("check 2", gameId.toString());
     const tx = await sendJoinGame(gameId);
     console.log("tx", tx);
@@ -308,7 +323,7 @@ const TreasureCard = ({
                 Your Amount
               </Typography>
               <Typography fontSize="1rem" fontWeight="400" color="#7B869A">
-                {formatBigNumber(userAmount.toString(), 18, 2)} U
+                {formatBigNumber(userAmount.toString(), 6, 2)} U
               </Typography>
             </Stack>
             {/* Total Amount */}
@@ -323,7 +338,7 @@ const TreasureCard = ({
                 Total Amount
               </Typography>
               <Typography fontSize="1rem" fontWeight="400" color="#7B869A">
-                {formatBigNumber(totalFeeAmount.toString(), 18, 2)} U
+                {formatBigNumber(totalFeeAmount.toString(), 6, 2)} U
               </Typography>
             </Stack>
             {/* Host */}
