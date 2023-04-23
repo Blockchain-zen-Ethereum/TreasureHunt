@@ -22,3 +22,22 @@ export function formatNumber(
   });
   return formatter.format(parseFloat(roundedNumber));
 }
+
+export function formatBigNumber(
+  bignumberString: string,
+  decimals = 18,
+  precision = 6,
+  notation: Notation = "compact"
+) {
+  const roundedNumber = Big(bignumberString)
+    .div(Big(10).pow(decimals))
+    .toFixed(precision);
+
+  // TODO: internationalization
+  const formatter = new Intl.NumberFormat("en-US", {
+    minimumFractionDigits: precision,
+    maximumFractionDigits: precision,
+    notation,
+  });
+  return formatter.format(parseFloat(roundedNumber));
+}
