@@ -30,6 +30,13 @@ const theme = createTheme({
         },
       },
     },
+    MuiPaper: {
+      styleOverrides: {
+        root: {
+          backgroundColor: "#EDEFF5",
+        },
+      },
+    }
   },
   palette: {
     primary: {
