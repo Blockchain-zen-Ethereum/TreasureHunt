@@ -23,6 +23,7 @@ import {
 } from "@/utils/getDate";
 import { BigNumber } from "ethers";
 import { useGetUserAmount } from "@/hooks/useGetUserAmount";
+import { useJoinGame } from "@/hooks/useJoinGame";
 // import { formatEther, parseEther } from "@ethersproject/units";
 
 interface ExpandMoreProps extends IconButtonProps {
@@ -71,6 +72,7 @@ const TreasureCard = ({
   const currentDate = new Date();
   const [expanded, setExpanded] = useState(false);
   const userAmount = useGetUserAmount(userAddress, Number(gameId.toString()));
+  const { state: stateJoinGame, send: sendJoinGame } = useJoinGame();
   const isParticipated = Number(userAmount.toString()) > 0;
   const isOverDeadline = currentDate.getTime() > deadline * 1000;
   const isEnd = isOverDeadline && isSettled;
@@ -80,6 +82,12 @@ const TreasureCard = ({
 
   const handleExpandClick = () => {
     setExpanded(!expanded);
+  };
+
+  const handleJoinGame = async () => {
+    console.log("check 2", gameId.toString());
+    const tx = await sendJoinGame(gameId);
+    console.log("tx", tx);
   };
 
   return (
@@ -214,6 +222,7 @@ const TreasureCard = ({
                 bgcolor: "#1334A9",
               },
             }}
+            onClick={handleJoinGame}
           >
             <Stack
               direction="row"
